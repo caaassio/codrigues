@@ -24,12 +24,12 @@
 }
 
 .logo-n:hover .rest{
-    transform: translateX(72px);
+    transform: translateX(80px);
 }
 
 .logo-n:hover .full-name{
     opacity: 1;
-    transform: translateX(14px);
+    transform: translateX(15px);
     transition: all 0.9s cubic-bezier(0.2, 0.5, 0.3, 1);
 }
 

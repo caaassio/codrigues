@@ -1,0 +1,91 @@
+.btt {
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 36px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-in-out;
+}
+
+.btt.show{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btt .rocket {
+    transform: rotate(-45deg);
+    font-size: 2em;
+    color: var(--cor-texto);
+    filter: opacity(20%);
+}
+
+.btt:hover .rocket {
+    color: var(--cor-texto);
+    filter: opacity(50%);
+}
+
+.btt .flame {
+    color: orange;
+    font-size: 26px;
+    opacity: 0;
+    margin-top: -10px;
+    transition: opacity 0.2s ease;
+    transform: rotate(180deg);
+}
+
+.btt.active {
+    transform: translateY(-20px);
+}
+
+.btt.active .rocket {
+    color: var(--cor-texto);
+    filter: opacity(20%);
+}
+
+.btt.active .flame {
+    opacity: 1;
+    animation: tremor 0.3s infinite, brilho 1s infinite alternate;
+}
+
+@keyframes tremor {
+    0% {
+    transform: rotate(180deg);
+    }
+    25% {
+    transform: rotate(165deg);
+    }
+    50% {
+    transform: rotate(195deg);
+    }
+    75% {
+    transform: rotate(165deg);
+    }
+    100% {
+    transform: rotate(180deg);
+    }
+}
+
+@keyframes brilho {
+    0% {
+    text-shadow: 0 0 5px orange;
+    }
+    100% {
+    text-shadow: 0 0 10px red, 0 0 10px yellow;
+    }
+}
+
+@media (max-width: 480px) {
+    .btt {
+    right: 16px;
+    bottom: 14px;
+    }
+}
