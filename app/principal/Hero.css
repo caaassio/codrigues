@@ -24,20 +24,6 @@
     white-space: nowrap;
     overflow: hidden;
 }
-
-.txt-home-mobile{
-    display: none;
-}
-
-.txt-home::after {
-    content: "";
-    width: 3px;
-    height: 1.5rem;
-    background:  var(--cor-texto);
-    display: inline-block;
-    margin-left: 5px;
-    animation: blink 0.7s step-end infinite;
-} 
   
 @keyframes blink {
     50% { opacity: 0; }
@@ -203,6 +189,13 @@
         font-size: 22px;
         padding: 18px 20px;
    }
+
+   .redes-home{
+        top: 50px;
+   }
+   .redes-home::before{
+        top: -1rem;
+    }
 
 }
 

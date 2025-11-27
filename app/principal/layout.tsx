@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "../src/components/Header";
-import BackToTop from "../src/components/BackToTop"
-import Footer from "../src/components/Footer"
+import Header from "./Header";
+import BackToTop from "./BackToTop"
+import Footer from "./Footer"
 
 export const metadata: Metadata = {
   title: "codrigues",

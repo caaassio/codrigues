@@ -32,9 +32,31 @@ export default function Header(){
         }
     }, [darkMode]);
 
-    const handleToggleTheme = () => {
-        setDarkMode((prev) => !prev);
-    };
+    useEffect(() => {
+        const saved = localStorage.getItem("theme");
+
+        if (saved === "light") {
+            setDarkMode(false); // usa light se usuário tinha escolhido
+        } else {
+            setDarkMode(true);  // padrão = dark
+        }
+    }, []);
+
+    useEffect(() => {
+        if (darkMode) {
+            document.body.classList.add("dark");
+            document.body.classList.remove("light");
+            localStorage.setItem("theme", "dark");
+        } else {
+            document.body.classList.add("light");
+            document.body.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        }
+    }, [darkMode]);
+
+    function handleToggleTheme() {
+        setDarkMode(prev => !prev);
+    }
 
     const handleLinkClick = (section) => {
         setActiveSection(section);
@@ -106,14 +128,14 @@ export default function Header(){
                     </li>
                     <li> 
                         <label 
-                            className="switch" 
+                            className={`switch ${!darkMode ? "active" : ""}`}
                             id="themeSwitch" 
                             aria-label="Alternar tema" 
                         > 
                         <input 
                             type="checkbox" 
                             id="themeToggle" 
-                            checked={darkMode} 
+                            checked={!darkMode}
                             onChange={handleToggleTheme} 
                         /> 
                         <i 
