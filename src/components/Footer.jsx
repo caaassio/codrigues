@@ -1,7 +1,7 @@
 "use client";
 
 import './Footer.css'
-import AwesomeToggle from "./AwesomeToggle";
+import AwesomeToggle from "../../app/awesome/AwesomeToggle";
 export default function Footer(){
     return(
         <footer className="footer">
