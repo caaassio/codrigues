@@ -12,15 +12,42 @@ export default function AwesomeToggle() {
     setChecked(pathname === "/awesome");
   }, [pathname]);
 
-  function handleChange(e) {
+  function scrollToContato() {
+    const tryScroll = () => {
+      const el = document.getElementById("contato");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+      }
+      return false;
+    };
+
+    if (tryScroll()) return;
+
+    let attempts = 0;
+    const id = setInterval(() => {
+      attempts += 1;
+      if (tryScroll() || attempts > 40) {
+        clearInterval(id);
+      }
+    }, 50);
+  }
+
+  async function handleChange(e) {
     const newChecked = e.target.checked;
     setChecked(newChecked);
 
     if (newChecked) {
-      router.push("/awesome"); 
-    } else {
-      router.push("/"); 
+      await router.push("/awesome");
+      return;
     }
+
+    if (history.length > 1) {
+      router.back(); 
+      return;
+    }
+
+    router.replace("/#contato");
   }
 
   return (

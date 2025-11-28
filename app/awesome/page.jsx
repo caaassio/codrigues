@@ -2,29 +2,37 @@
 
 import React, { useEffect, useState } from "react";
 import "./Awesome-style.css";
+import Link from "next/link";
+import AwesomeToggle from "./AwesomeToggle";
 
 export default function AwesomeHome() {
-
-    const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
+    setNow(new Date());
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  function formatDate(d) {
-    return d.toLocaleDateString();
-  }
   function formatTime(d) {
-    return d.toLocaleTimeString();
+    if (!d) return "";
+    return d.toLocaleTimeString("pt-BR");
+  }
+
+  function formatDateExtenso(d) {
+    if (!d) return "";
+    return d.toLocaleDateString("pt-BR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   }
 
   return (
     <div className="awesome-page">
       <div id="container">
-
-        <img className="bg" src="/img/bg-90s.png" alt="fundo decorativo" />
-
         <div className="header">
           <img className="foto" src="/img/foto90s.jpg" alt="foto Cassio" />
 
@@ -38,13 +46,13 @@ export default function AwesomeHome() {
 
           <ul className="menu">
             <li>
-              <a href="./awesome-about.html">Sobre</a>
+              <Link href="/awesome/about">Sobre</Link>
             </li>
             <li>
-              <a href="./awesome-portfolio.html">Portfólio</a>
+              <Link href="/awesome/portfolio">Portfolio</Link>
             </li>
             <li>
-              <a href="./awesome-contact.html">Contato</a>
+              <Link href="/awesome/contato">Contato</Link>
             </li>
           </ul>
         </div>
@@ -56,7 +64,7 @@ export default function AwesomeHome() {
         <div className="barra-gradiente" />
 
         <div className="data-e-hora">
-          <span id="data-hoje">{formatDate(now)}</span>
+          <span id="data-hoje">{formatDateExtenso(now)}</span>
           <span id="hora-agora">{formatTime(now)}</span>
         </div>
 
@@ -68,6 +76,7 @@ export default function AwesomeHome() {
         </div>
 
         <footer className="rodape">
+          <AwesomeToggle />
           <p>Proudly designed by Cassio Rodrigues</p>
         </footer>
       </div>

@@ -77,6 +77,10 @@ export default function Portfolio() {
   const [current, setCurrent] = useState(0);
   const carouselRef = useRef(null);
   const modalRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function openModal(imgs) {
     setCarouselImages(imgs);
@@ -196,15 +200,15 @@ export default function Portfolio() {
       </div>
 
       {/* Modal */}
-        {typeof document !== "undefined" &&
+        {mounted &&
             ReactDOM.createPortal(
                 <div
-                id="modal"
-                ref={modalRef}
-                className={`modal ${isModalOpen ? "active" : ""}`}
-                style={{ display: isModalOpen ? "flex" : "none" }} // flex para centralizar
-                role="dialog"
-                aria-modal={isModalOpen ? "true" : "false"}
+                  id="modal"
+                  ref={modalRef}
+                  className={`modal ${isModalOpen ? "active" : ""}`}
+                  style={{ display: isModalOpen ? "flex" : "none" }} 
+                  role="dialog"
+                  aria-modal={isModalOpen ? "true" : "false"}
                 >
                 <div className={`modal-content ${isModalOpen ? "show" : ""}`}>
                     <button className="close-btn" onClick={closeModal} aria-label="Fechar modal">

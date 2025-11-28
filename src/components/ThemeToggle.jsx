@@ -4,19 +4,27 @@ import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
-    if (typeof window === "undefined") return "light";
-    return localStorage.getItem("theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    if (typeof window === "undefined") return "dark"; 
+
+    const saved = localStorage.getItem("theme");
+    if (saved) return saved;
+
+    const prefersDark = window.matchMedia && 
+                        window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return prefersDark ? "dark" : "dark"; 
   });
 
   useEffect(() => {
-    // aplica classe/data-attribute no root (html)
-    const root = document.documentElement;
-    root.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
     localStorage.setItem("theme", theme);
   }, [theme]);
 
   function toggleTheme() {
-    setTheme(prev => prev === "dark" ? "light" : "dark");
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
   }
 
   return (
@@ -27,7 +35,7 @@ export default function ThemeToggle() {
       aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
       title={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
     >
-      {theme === "dark" ? "🌞" : "🌙"}
+      {theme === "dark" ? "Sun" : "Moon"}
     </button>
   );
 }

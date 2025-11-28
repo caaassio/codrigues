@@ -7,7 +7,7 @@ import './Header.css'
 export default function Header(){
 
     const [menuOpen, setMenuOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(true);
     const [activeSection, setActiveSection] = useState("home");
 
     useEffect(() => {
@@ -36,9 +36,9 @@ export default function Header(){
         const saved = localStorage.getItem("theme");
 
         if (saved === "light") {
-            setDarkMode(false); // usa light se usuário tinha escolhido
+            setDarkMode(false); 
         } else {
-            setDarkMode(true);  // padrão = dark
+            setDarkMode(true);  
         }
     }, []);
 

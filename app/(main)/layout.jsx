@@ -1,8 +1,8 @@
-import "./globals.css"; 
+import "../globals.css"; 
 
-import Header from "../src/components/Header";
-import BackToTop from "../src/components/BackToTop";
-import Footer from "../src/components/Footer";
+import Header from "../../src/components/Header";
+import BackToTop from "../../src/components/BackToTop";
+import Footer from "../../src/components/Footer";
 
 export const metadata = {
   title: "codrigues",
