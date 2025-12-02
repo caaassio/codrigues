@@ -447,3 +447,4 @@ input:checked + .slider-awesome:before {
 	transform: translateX(-50%) translateY(-45px);
 	opacity: 1;
 }
+

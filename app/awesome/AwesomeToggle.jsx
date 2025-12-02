@@ -1,61 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AwesomeToggle() {
   const router = useRouter();
   const pathname = usePathname();
-  const [checked, setChecked] = useState(false);
+  const isAwesome = pathname === "/awesome";
 
+  // Estado local só pra animação (o truque!)
+  const [isChecked, setIsChecked] = useState(false);
+
+  // Primeira montagem: define o estado inicial sem animação
   useEffect(() => {
-    setChecked(pathname === "/awesome");
-  }, [pathname]);
+    setIsChecked(isAwesome);
+  }, []);
 
-  function scrollToContato() {
-    const tryScroll = () => {
-      const el = document.getElementById("contato");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-        return true;
-      }
-      return false;
-    };
+  // Quando a rota muda (volta do awesome), atualiza SEM animação
+  useEffect(() => {
+    if (isAwesome !== isChecked) {
+      // Força sem transição
+      const label = document.querySelector(".toggle-awesome");
+      label?.classList.add("no-transition");
 
-    if (tryScroll()) return;
+      setIsChecked(isAwesome);
 
-    let attempts = 0;
-    const id = setInterval(() => {
-      attempts += 1;
-      if (tryScroll() || attempts > 40) {
-        clearInterval(id);
-      }
-    }, 50);
-  }
-
-  async function handleChange(e) {
-    const newChecked = e.target.checked;
-    setChecked(newChecked);
-
-    if (newChecked) {
-      await router.push("/awesome");
-      return;
+      // Remove a classe no próximo frame pra animação voltar
+      requestAnimationFrame(() => {
+        label?.classList.remove("no-transition");
+      });
     }
+  }, [isAwesome]);
 
-    if (history.length > 1) {
-      router.back(); 
-      return;
+  const handleChange = () => {
+    if (isAwesome) {
+      router.replace("/#spawn-contato", { scroll: false });
+    } else {
+      router.push("/awesome");
     }
-
-    router.replace("/#contato");
-  }
+  };
 
   return (
     <label className="toggle-awesome">
       <input
         type="checkbox"
         id="toggleAwesome"
-        checked={checked}
+        checked={isChecked}           // ← agora usa estado local
         onChange={handleChange}
       />
       <span className="slider-awesome"></span>
