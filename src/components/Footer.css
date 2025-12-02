@@ -81,18 +81,15 @@ input:checked + .slider-awesome:before {
 	opacity: 1;
 }
 
-/* Animação normal quando o usuário clica */
 .toggle-awesome .slider-awesome {
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* SEM animação quando a página já carrega em /awesome OU quando spawna no contato */
 .toggle-awesome:not([data-mounted]) .slider-awesome,
 html[data-pathname="/awesome"] .slider-awesome {
   transition: none !important;
 }
 
-/* Garante que depois do primeiro render a animação volta */
 .toggle-awesome[data-mounted] .slider-awesome {
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
