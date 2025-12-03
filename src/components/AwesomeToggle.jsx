@@ -2,12 +2,15 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import "./AwesomeToggle.css";
 
 export default function AwesomeToggle() {
   const router = useRouter();
   const pathname = usePathname();
-  const isAwesome = pathname === "/awesome";
 
+  const showToggle = pathname === "/" || pathname === "/awesome";
+
+  const isAwesome = pathname === "/awesome";
   const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
@@ -16,7 +19,6 @@ export default function AwesomeToggle() {
 
   useEffect(() => {
     if (isAwesome !== isChecked) {
-
       const label = document.querySelector(".toggle-awesome");
       label?.classList.add("no-transition");
 
@@ -36,12 +38,14 @@ export default function AwesomeToggle() {
     }
   };
 
+  if (!showToggle) return null;
+
   return (
     <label className="toggle-awesome">
       <input
         type="checkbox"
         id="toggleAwesome"
-        checked={isChecked}           
+        checked={isChecked}
         onChange={handleChange}
       />
       <span className="slider-awesome"></span>

@@ -1,151 +1,203 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import './Header.css'
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import "./Header.css";
 
-export default function Header(){
+export default function Header() {
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [activeSection, setActiveSection] = useState("home");
 
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(true);
-    const [activeSection, setActiveSection] = useState("home");
+  const rafRef = useRef(null);
+  const tickingRef = useRef(false);
 
-    useEffect(() => {
-        if (typeof window === "undefined") return;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = localStorage.getItem("theme");
+    if (saved === "light") {
+      setDarkMode(false);
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    } else {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    }
+  }, []);
 
-        const storedTheme = localStorage.getItem("theme");
-        if (storedTheme === "dark") {
-        setDarkMode(true);
-        document.documentElement.classList.add("dark");
-        }
-    }, []);
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
-    useEffect(() => {
-        if (typeof window === "undefined") return;
+  function handleToggleTheme() {
+    setDarkMode((p) => !p);
+  }
 
-        if (darkMode) {
-        document.documentElement.classList.add("dark");
-        localStorage.setItem("theme", "dark");
-        } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-        }
-    }, [darkMode]);
+  function normalizeHash(h) {
+    if (!h) return "";
+    return h.startsWith("#") ? h.toLowerCase() : `#${h.toLowerCase()}`;
+  }
 
-    useEffect(() => {
-        const saved = localStorage.getItem("theme");
+  function computeActiveFromLocationOrScroll() {
+    if (typeof window === "undefined") return "home";
 
-        if (saved === "light") {
-            setDarkMode(false); 
-        } else {
-            setDarkMode(true);  
-        }
-    }, []);
+    const path = window.location.pathname || pathname || "/";
+    const hash = normalizeHash(window.location.hash || "");
 
-    useEffect(() => {
-        if (darkMode) {
-            document.body.classList.add("dark");
-            document.body.classList.remove("light");
-            localStorage.setItem("theme", "dark");
-        } else {
-            document.body.classList.add("light");
-            document.body.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-        }
-    }, [darkMode]);
+    if (path.startsWith("/awesome")) return "awesome";
 
-    function handleToggleTheme() {
-        setDarkMode(prev => !prev);
+    if (hash.includes("spawn-contato") || hash === "#contato") return "contato";
+
+    if (hash && (hash === "#home" || hash === "#about" || hash === "#portfolio" || hash === "#contato")) {
+      return hash.replace("#", "");
     }
 
-    const handleLinkClick = (section) => {
-        setActiveSection(section);
-        setMenuOpen(false);
+    const sections = ["home", "about", "portfolio", "contato"];
+    const offset = Math.max(80, Math.round(window.innerHeight * 0.15));
+    let best = "home";
+    let bestDist = Infinity;
+
+    for (const sec of sections) {
+      const el = document.getElementById(sec);
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      const dist = Math.abs(rect.top - offset);
+      if (rect.top - offset <= window.innerHeight * 0.6 && dist < bestDist) {
+        bestDist = dist;
+        best = sec;
+      }
+    }
+
+    return best;
+  }
+
+  useEffect(() => {
+    function onScroll() {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+      rafRef.current = requestAnimationFrame(() => {
+        const active = computeActiveFromLocationOrScroll();
+        setActiveSection((prev) => (prev !== active ? active : prev));
+        tickingRef.current = false;
+      });
+    }
+
+    function maybeAttachScroll() {
+      if (typeof window === "undefined") return;
+      if (window.location.pathname === "/" || window.location.pathname === "") {
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+      }
+    }
+
+    maybeAttachScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
+  }, [pathname]);
 
-    return(
-        <header>
-            <Link href="/#home" className="link-logo">
-                <div className="logo-n">
-                    <span className="letter-c">c</span>
-                    <span className="rest">odrigues.</span>
-                    <span className="full-name">assior</span>
-                </div>
+  useEffect(() => {
+    function onLocationChange() {
+      const active = computeActiveFromLocationOrScroll();
+      setActiveSection(active);
+      setMenuOpen(false);
+    }
+
+    if (typeof window === "undefined") return;
+
+    onLocationChange();
+
+    window.addEventListener("hashchange", onLocationChange);
+    window.addEventListener("popstate", onLocationChange);
+
+    return () => {
+      window.removeEventListener("hashchange", onLocationChange);
+      window.removeEventListener("popstate", onLocationChange);
+    };
+  }, [pathname]);
+
+  const handleLinkClick = (section) => {
+    setActiveSection(section);
+    setMenuOpen(false);
+  };
+
+  return (
+    <header className="site-header">
+      <Link href="/#home" className="link-logo" onClick={() => handleLinkClick("home")}>
+        <div className="logo-n">
+          <span className="letter-c">c</span>
+          <span className="rest">odrigues.</span>
+          <span className="full-name">assior</span>
+        </div>
+      </Link>
+
+      <nav>
+        <button id="menu-btn" type="button" onClick={() => setMenuOpen((p) => !p)}>
+          <i className="fa-solid fa-bars" />
+        </button>
+
+        <ul id="menu" className={menuOpen ? "show" : ""}>
+          <li>
+            <Link
+              href="/#home"
+              className={`internal-link ${activeSection === "home" ? "active" : ""}`}
+              onClick={() => handleLinkClick("home")}
+            >
+              HOME
             </Link>
+          </li>
 
-            <nav>
-                <button
-                    id="menu-btn"
-                    type="button"
-                    onClick={()=>setMenuOpen((prev) => !prev)}
-                >
+          <li>
+            <Link
+              href="/#about"
+              className={`internal-link ${activeSection === "about" ? "active" : ""}`}
+              onClick={() => handleLinkClick("about")}
+            >
+              SOBRE
+            </Link>
+          </li>
 
-                    <i className="fa-solid fa-bars"></i>
-                </button>
+          <li>
+            <Link
+              href="/#portfolio"
+              className={`internal-link ${activeSection === "portfolio" ? "active" : ""}`}
+              onClick={() => handleLinkClick("portfolio")}
+            >
+              PORTFÓLIO
+            </Link>
+          </li>
 
-                <ul
-                    id="menu"
-                    className={menuOpen ? "show" : ""}
-                >
-                    <li>
-                        <a
-                            href="#home"
-                            className={`internal-link ${activeSection === "home" ? "active" : ""}`}
-                            onClick={() => handleLinkClick("home")}
-                        >
-                            HOME
-                        </a>
-                    </li>
+          <li>
+            <Link
+              href="/#contato"
+              className={`internal-link ${activeSection === "contato" ? "active" : ""}`}
+              onClick={() => handleLinkClick("contato")}
+            >
+              CONTATO
+            </Link>
+          </li>
 
-                    <li>
-                        <a
-                            href="#about"
-                            className={`internal-link ${activeSection === "about" ? "active" : ""}`}
-                            onClick={() => handleLinkClick("about")}
-                        >
-                            SOBRE
-                        </a>
-                    </li>
-
-                    <li>
-                        <a
-                            href="#portfolio"
-                            className={`internal-link ${activeSection === "portfolio" ? "active" : ""}`}
-                            onClick={() => handleLinkClick("portfolio")}
-                        >
-                            PORTFÓLIO
-                        </a>
-                    </li>
-
-                    <li>
-                        <a
-                            href="#contato"
-                            className={`internal-link ${activeSection === "contato" ? "active" : ""}`}
-                            onClick={() => handleLinkClick("contato")}
-                        >
-                            CONTATO
-                        </a>
-                    </li>
-                    <li> 
-                        <label 
-                            className={`switch ${!darkMode ? "active" : ""}`}
-                            id="themeSwitch" 
-                            aria-label="Alternar tema" 
-                        > 
-                        <input 
-                            type="checkbox" 
-                            id="themeToggle" 
-                            checked={!darkMode}
-                            onChange={handleToggleTheme} 
-                        /> 
-                        <i 
-                            className="fa-solid fa-moon" 
-                            aria-hidden="true"
-                        ></i> 
-                        </label> 
-                    </li>
-                </ul>
-            </nav>
-        </header>
-    );
+          <li>
+            <label className={`switch ${!darkMode ? "active" : ""}`} id="themeSwitch" aria-label="Alternar tema">
+              <input type="checkbox" id="themeToggle" checked={!darkMode} onChange={handleToggleTheme} />
+              <i className="fa-solid fa-moon" aria-hidden="true" />
+            </label>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
 }

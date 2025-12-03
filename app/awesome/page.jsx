@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import "./Awesome-style.css";
+import styles from "./Awesome-style.module.css";
 import Link from "next/link";
-import AwesomeToggle from "./AwesomeToggle";
 
 export default function AwesomeHome() {
   const [now, setNow] = useState(null);
@@ -31,7 +30,7 @@ export default function AwesomeHome() {
   }
 
   return (
-    <div className="awesome-page">
+    <div className={styles.root}>
       <div id="container">
         <div className="header">
           <img className="foto" src="/img/foto90s.jpg" alt="foto Cassio" />
@@ -76,7 +75,6 @@ export default function AwesomeHome() {
         </div>
 
         <footer className="rodape">
-          <AwesomeToggle />
           <p>Proudly designed by Cassio Rodrigues</p>
         </footer>
       </div>

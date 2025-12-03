@@ -70,6 +70,37 @@ a{
     --color-name: #3c2775;
     --link-redes: #3c2775;
  }
+
+ /* overlay */
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  transition: opacity .12s linear;
+  z-index: 99990;
+  pointer-events: none; /* não bloqueia por padrão */
+}
+
+.page-transition-overlay.show {
+  opacity: 1;
+}
+
+/* bloqueia cliques só quando explicitamente marcado */
+.page-transition-overlay[data-block="1"] {
+  pointer-events: auto;
+}
+
+/* regra para o toggle — remove animação quando necessário */
+.no-animation .slider-awesome,
+.toggle-awesome.no-animation .slider-awesome:before {
+  transition: none !important;
+}
+
+/* garanta transição normal no :before do slider */
+.slider-awesome:before {
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
  
 @media (prefers-color-scheme: dark) {
   :root {
