@@ -7,6 +7,7 @@ import Footer from "../../src/components/Footer";
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { ActiveSectionProvider } from "../../src/components/ActiveSectionProvider";
 
 export default function PrincipalLayout({ children }) {
   const pathname = usePathname();
@@ -43,10 +44,12 @@ export default function PrincipalLayout({ children }) {
 
   return (
     <>
+    <ActiveSectionProvider>
       <Header />
       <BackToTop />
       <main className="container">{children}</main>
       <Footer />
+    </ActiveSectionProvider>
     </>
   );
 }
