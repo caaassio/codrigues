@@ -11,8 +11,9 @@ export default function Header() {
   const [darkMode, setDarkMode] = useState(true);
   const [activeSection, setActiveSection] = useState("home");
 
-  const rafRef = useRef(null);
-  const tickingRef = useRef(false);
+  const observerRef = useRef(null);
+  const sectionsRef = useRef([]);
+  const popupHashRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -44,88 +45,93 @@ export default function Header() {
     setDarkMode((p) => !p);
   }
 
-  function normalizeHash(h) {
-    if (!h) return "";
-    return h.startsWith("#") ? h.toLowerCase() : `#${h.toLowerCase()}`;
-  }
-
-  function computeActiveFromLocationOrScroll() {
-    if (typeof window === "undefined") return "home";
-
-    const path = window.location.pathname || pathname || "/";
-    const hash = normalizeHash(window.location.hash || "");
-
-    if (path.startsWith("/awesome")) return "awesome";
-
-    if (hash.includes("spawn-contato") || hash === "#contato") return "contato";
-
-    if (hash && (hash === "#home" || hash === "#about" || hash === "#portfolio" || hash === "#contato")) {
-      return hash.replace("#", "");
-    }
-
-    const sections = ["home", "about", "portfolio", "contato"];
-    const offset = Math.max(80, Math.round(window.innerHeight * 0.15));
-    let best = "home";
-    let bestDist = Infinity;
-
-    for (const sec of sections) {
-      const el = document.getElementById(sec);
-      if (!el) continue;
-      const rect = el.getBoundingClientRect();
-      const dist = Math.abs(rect.top - offset);
-      if (rect.top - offset <= window.innerHeight * 0.6 && dist < bestDist) {
-        bestDist = dist;
-        best = sec;
-      }
-    }
-
-    return best;
-  }
-
   useEffect(() => {
-    function onScroll() {
-      if (tickingRef.current) return;
-      tickingRef.current = true;
-      rafRef.current = requestAnimationFrame(() => {
-        const active = computeActiveFromLocationOrScroll();
-        setActiveSection((prev) => (prev !== active ? active : prev));
-        tickingRef.current = false;
-      });
-    }
-
-    function maybeAttachScroll() {
-      if (typeof window === "undefined") return;
-      if (window.location.pathname === "/" || window.location.pathname === "") {
-        window.addEventListener("scroll", onScroll, { passive: true });
-        onScroll();
+    function onHashOrPop() {
+      const hash = (window.location.hash || "").toLowerCase();
+      if (hash.includes("spawn-contato") || hash === "#contato") {
+        setActiveSection("contato");
+        setMenuOpen(false);
+        popupHashRef.current = true;
+        return;
+      }
+      if (hash === "#home" || hash === "#about" || hash === "#portfolio" || hash === "#contato") {
+        setActiveSection(hash.replace("#", ""));
+        setMenuOpen(false);
+        popupHashRef.current = true;
+        return;
       }
     }
 
-    maybeAttachScroll();
-
+    if (typeof window === "undefined") return;
+    onHashOrPop();
+    window.addEventListener("hashchange", onHashOrPop);
+    window.addEventListener("popstate", onHashOrPop);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("hashchange", onHashOrPop);
+      window.removeEventListener("popstate", onHashOrPop);
     };
   }, [pathname]);
 
   useEffect(() => {
-    function onLocationChange() {
-      const active = computeActiveFromLocationOrScroll();
-      setActiveSection(active);
-      setMenuOpen(false);
-    }
-
     if (typeof window === "undefined") return;
 
-    onLocationChange();
+    if (pathname && pathname.startsWith("/awesome")) {
+      setActiveSection("awesome");
 
-    window.addEventListener("hashchange", onLocationChange);
-    window.addEventListener("popstate", onLocationChange);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+      return;
+    }
 
+    if (!(window.location.pathname === "/" || window.location.pathname === "")) {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+      return;
+    }
+
+    const ids = ["home", "about", "portfolio", "contato"];
+    const elems = ids.map((id) => document.getElementById(id)).filter(Boolean);
+    sectionsRef.current = elems;
+
+    if (elems.length === 0) return;
+
+    if (popupHashRef.current) {
+      requestAnimationFrame(() => {
+        popupHashRef.current = false;
+      });
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        let best = null;
+        for (const ent of entries) {
+          if (!best || ent.intersectionRatio > best.intersectionRatio) best = ent;
+        }
+        if (best && best.isIntersecting) {
+          const id = best.target.id;
+          if (id) setActiveSection(id);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0", 
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+      }
+    );
+
+    elems.forEach((el) => io.observe(el));
+    observerRef.current = io;
+
+    // cleanup
     return () => {
-      window.removeEventListener("hashchange", onLocationChange);
-      window.removeEventListener("popstate", onLocationChange);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
     };
   }, [pathname]);
 

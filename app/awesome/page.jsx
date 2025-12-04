@@ -56,10 +56,6 @@ export default function AwesomeHome() {
           </ul>
         </div>
 
-        <div className="gif-portfolio">
-          <img src="/img/portfolio.gif" alt="gif portfolio" />
-        </div>
-
         <div className="barra-gradiente" />
 
         <div className="data-e-hora">

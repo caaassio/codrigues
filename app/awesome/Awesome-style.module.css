@@ -264,6 +264,7 @@
   height: 600px;
   width: 600px;
   color: #3cff00;
+  box-sizing: border-box;
 }
 
 .root :global(.form h2) {
@@ -274,15 +275,22 @@
 .root :global(.form label) {
   display: block;
   padding: 5px;
+  color: #3cff00;
+  margin: 0;
+  font-size: 16px;
+  
 }
 
 .root :global(.form-group) {
-  padding: 8px;
+  padding: 5px;
 }
 
 .root :global(input), .root :global(textarea) {
   width: 600px;
   background-color: white;
+  border-radius: 0;
+  font-size: 14px;
+  color: black;
 }
 
 .root :global(.form button) {
@@ -293,6 +301,9 @@
   outline: 2px dotted #5c5c5c;
   outline-offset: -6px;
   color: #000;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
 }
 
 .root :global(.popup) {
@@ -317,8 +328,8 @@
   font-size: 24px;
   font-family: 'Comic Sans MS', cursive, sans-serif;
   text-align: center;
-  width: 320px;
-  height: 250px;
+  width: 400px;
+  height: 300px;
   box-sizing: border-box;
 }
 
@@ -344,13 +355,19 @@
   font-family: 'Comic Sans MS', cursive, sans-serif;
   border-radius: 0px;
   background-color: rgb(211, 211, 211);
+  margin-top: 100px;
 }
 
 .root :global(button.btn-popup:hover) {
   font-family: 'Comic Sans MS', cursive, sans-serif;
   border-radius: 0px;
-  background-color: rgb(163, 16, 16);
+  background-color: rgb(8, 201, 66);
 }
+
+.root :global(#popupObrigado .btn-popup:hover) {
+  background-color: red;
+}
+
 
 /* --------------------------------- Rodapé ------------------------------ */
 .root :global(footer) {

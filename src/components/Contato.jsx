@@ -2,6 +2,7 @@
 
 import React from "react";
 import "./Contato.css";
+import FormularioContato from "./FormularioContato";
 
 export default function Contato() {
   return (
@@ -50,33 +51,7 @@ export default function Contato() {
         </div>
 
         <div className="form reveal">
-          <form id="meuFormulario" action="https://formspree.io/f/mwpobqnz" method="POST">
-            <h2>Formulário de contato</h2>
-            <div className="form-content">
-              <div className="form-group">
-                <label htmlFor="nome">Nome</label>
-                <input type="text" name="nome" id="nome" required />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="email">E-mail</label>
-                <input type="email" name="email" id="email" required />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="mensagem">Mensagem</label>
-                <textarea name="mensagem" id="mensagem" rows={10} required />
-              </div>
-
-              {/* honeypot anti-spam */}
-              <input type="text" name="_honey" style={{ display: "none" }} />
-
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_replyto" value="caaassio@gmail.com" />
-
-              <button type="submit">Enviar</button>
-            </div>
-          </form>
+            <FormularioContato/>
         </div>
       </div>
     </section>
