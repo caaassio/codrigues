@@ -1,5 +1,6 @@
 import "./globals.css";
-import AwesomeToggle from "../src/components/AwesomeToggle"; 
+import Knob from "../src/components/Knob";
+import PageTransition from "./PageTransition";
 
 export default function RootLayout({ children }) {
   return (
@@ -15,8 +16,11 @@ export default function RootLayout({ children }) {
       </head>
       <body>
 
-          <AwesomeToggle />
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
+        <Knob />
+        
       </body>
     </html>
   );

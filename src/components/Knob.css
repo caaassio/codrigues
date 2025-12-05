@@ -1,0 +1,73 @@
+.knob-wrapper {
+    position: fixed; 
+    width: 80px; 
+    height: 80px; 
+    cursor: pointer; 
+    left: 2rem;
+    bottom: 2rem;
+    z-index: 999 !important;
+}
+
+.knob-wrapper input {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    z-index: 20;
+}
+
+.knob {
+    background-color: #333333;
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    border: 6px solid #000000;
+    box-sizing: border-box;
+    position: absolute;
+    box-shadow: 
+        inset 4px 4px 5px 1px rgba(0, 0, 0, 0.6), 
+        0 10px 20px rgba(0,0,0,0.4);
+    pointer-events: none;
+}
+
+.knob::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    top: -6px;
+    left: -6px;
+    z-index: -1;
+    transition: all 0.4s;
+    box-shadow: 
+        0 4px 10px rgba(70, 62, 62, 0), 
+        0 0 25px rgba(100, 255, 201, 0);
+}
+
+.knob::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 35px;
+    background: linear-gradient(to top, #e6e6e6, #ffffff);
+    border-radius: 8px;
+    top: -9px;
+    left: 53%;
+    transform: translateX(-50%) rotate(-45deg);
+    transform-origin: center 48px;
+    z-index: 10;
+    box-shadow: inset -1px 2px 5px rgba(0, 0, 0, 0.664);
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+}
+
+.knob-wrapper input:checked + .knob::after {
+    transform: translateX(-50%) rotate(45deg);
+    left: 50%;
+}
+
+.knob-wrapper input:checked + .knob {
+    transition: all 0.2s;
+    transform: scale(1.01);
+}
